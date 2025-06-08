@@ -1,15 +1,14 @@
-﻿/*using Microsoft.EntityFrameworkCore;
-using AppointmentBookingAPI.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using XPointBE.Models;
 
-namespace AppointmentBookingAPI.Data
+public class ApplicationDBContext : DbContext
 {
-    public class AppDbContext : DbContext
+    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
+        : base(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
-
-        public DbSet<User> Users { get; set; }
-        public DbSet<Service> Services { get; set; }
-        public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<Professional> Professionals { get; set; }
     }
-}*/
+
+    public DbSet<User> Users { get; set; }
+    public DbSet<Reserva> Reservas { get; set; }
+
+}
