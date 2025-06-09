@@ -11,7 +11,18 @@ public static class UserMappers
         {
             Id = user.Id,
             Name = user.Name,
-            Role = user.Role
+            Role = user.Role.ToString()
+        };
+    }
+    
+    public static User ToUser (this CreateUserRequestDto createUserRequestDto)
+    {
+        return new User
+        {
+            Name = createUserRequestDto.Name,
+            Email = createUserRequestDto.Email,
+            PasswordHash = createUserRequestDto.Password, // se necesita hashear en control
+            Role = createUserRequestDto.Role
         };
     }
 }

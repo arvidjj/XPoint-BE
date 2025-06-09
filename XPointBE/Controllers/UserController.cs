@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using XPointBE.Dtos.User;
 using XPointBE.Mappers;
 using XPointBE.Models;
 
@@ -46,19 +47,25 @@ public class UserController : ControllerBase
     }
     
     [HttpPost(Name = "CreateUser")]
-    public IActionResult Post([FromBody] User user)
+    public IActionResult Post([FromBody] CreateUserRequestDto createUserRequestDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Model validation failed");
+            return BadRequest(ModelState);
+        }
+        
+        var user = createUserRequestDto.ToUser();
         _logger.LogInformation("Creating a new user");
         if (user == null)
         {
             _logger.LogWarning("User data is null");
             return BadRequest("User data cannot be null");
         }
-
+        
         _context.Users.Add(user);
         _context.SaveChanges();
-
-        _logger.LogInformation($"User created with ID: {user.Id}");
-        return CreatedAtRoute("GetUserById", new { id = user.Id }, user.ToUserDto());
+        _logger.LogInformation("User created successfully with ID: {Id}", user.Id);
+        return CreatedAtAction(nameof(Get), new { id = user.Id }, user.ToUserDto());
     }
 }
