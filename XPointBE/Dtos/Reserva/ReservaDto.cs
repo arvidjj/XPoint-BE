@@ -6,5 +6,5 @@ public class ReservaDto
     public DateTime Fecha { get; set; }
     public int? UsuarioId { get; set; }
     public decimal Precio { get; set; }
-    public Boolean Terminada { get; set; }
+    public bool Terminada { get; set; }
 }

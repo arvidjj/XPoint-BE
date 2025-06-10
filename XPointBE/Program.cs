@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using XPointBE.Interfaces;
+using XPointBE.Repositories;
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -55,7 +57,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
@@ -63,6 +64,8 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 
 var app = builder.Build();
 
