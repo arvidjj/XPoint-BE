@@ -42,7 +42,7 @@ public class ReservaController : ControllerBase
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         _logger.LogInformation($"Fetching reserva with ID: {id}");
-        var reserva = await _context.Reservas.FindAsync(id);
+        var reserva = await _reservaRepository.GetByIdAsync(id);
 
         if (reserva != null) return Ok(reserva.ToReservaDto());
         
@@ -60,8 +60,7 @@ public class ReservaController : ControllerBase
             _logger.LogWarning("Reserva data is null");
             return BadRequest("Reserva data cannot be null");
         }
-        await _context.Reservas.AddAsync(reserva);
-        await _context.SaveChangesAsync();
+        await _reservaRepository.CreateAsync(reserva);
         _logger.LogInformation("Reserva created successfully with ID: {Id}", reserva.Id);
         return CreatedAtAction(nameof(Get), new { id = reserva.Id }, reserva.ToReservaDto());
     }
@@ -69,37 +68,24 @@ public class ReservaController : ControllerBase
     [HttpPut("{id:int}", Name = "UpdateReserva")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateReservaRequestDto reservaDto)
     {
-        var existingReserva = await _context.Reservas.FindAsync(id);
-        if (existingReserva == null)
+        var reserva = reservaDto.ToReservaFromUpdateDTO(id);
+        var reservaModel = await _reservaRepository.UpdateAsync(reserva);
+        
+        if (reservaModel == null)
         {
             _logger.LogWarning("Reserva with ID: {Id} not found for update", id);
             return NotFound();
         }
-
-        existingReserva.Fecha = reservaDto.Fecha;
-        existingReserva.UsuarioId = reservaDto.UsuarioId;
-        existingReserva.ServicioId = reservaDto.ServicioId;
-        existingReserva.Terminada = reservaDto.Terminada;
-
-        await _context.SaveChangesAsync();
         
         _logger.LogInformation("Reserva with ID: {Id} updated successfully", id);
-        return Ok(existingReserva.ToReservaDto());
+        return Ok(reservaModel.ToReservaDto());
     }
     
     [HttpDelete("{id:int}", Name = "DeleteReserva")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var reserva = await _context.Reservas.FindAsync(id);
-        if (reserva == null)
-        {
-            _logger.LogWarning("Reserva with ID: {Id} not found for deletion", id);
-            return NotFound();
-        }
+        var reserva = await _reservaRepository.DeleteAsync(id);
 
-        _context.Reservas.Remove(reserva);
-        await _context.SaveChangesAsync();
-        
         _logger.LogInformation("Reserva with ID: {Id} deleted successfully", id);
         return NoContent();
     }

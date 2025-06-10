@@ -28,4 +28,18 @@ public static class ReservaMappers
             Terminada = false // Por defecto, una reserva no está terminada
         };
     }
+    
+    // why id? // porque al actualizar una reserva, necesitamos el id para buscarla en la base de datos
+    public static Reserva ToReservaFromUpdateDTO(this UpdateReservaRequestDto reservaDto, int id)
+    {
+        return new Reserva
+        {
+            Id = id,
+            Fecha = reservaDto.Fecha,
+            UsuarioId = reservaDto.UsuarioId,
+            Precio = 0, // El precio se decide por el servicio, no se asigna aquí
+            ServicioId = reservaDto.ServicioId,
+            Terminada = reservaDto.Terminada
+        };
+    }
 }
