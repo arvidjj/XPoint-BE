@@ -65,7 +65,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//auto wire up repositories
 builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 
 var app = builder.Build();
 

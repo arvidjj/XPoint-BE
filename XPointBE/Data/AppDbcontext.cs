@@ -10,6 +10,7 @@ public class ApplicationDBContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Reserva> Reservas { get; set; }
+    public DbSet<Servicio> Servicios { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
