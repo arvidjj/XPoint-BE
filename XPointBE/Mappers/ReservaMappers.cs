@@ -1,45 +1,80 @@
 ﻿using XPointBE.Dtos.Reserva;
+using XPointBE.Dtos.Servicio;
+using XPointBE.Dtos.User;
 using XPointBE.Models;
 
 namespace XPointBE.Mappers;
 
 public static class ReservaMappers
 {
+
     public static ReservaDto ToReservaDto (this Reserva reserva)
     {
         return new ReservaDto
         {
             Id = reserva.Id,
             Fecha = reserva.Fecha,
+            HoraInicio = reserva.HoraInicio,
+            HoraFin = reserva.HoraFin,
             UsuarioId = reserva.UsuarioId,
+            ServicioId = reserva.ServicioId,
             Precio = reserva.Precio,
-            Terminada = reserva.Terminada
-        };
-    }
-
-    public static Reserva ToReservaFromCreateDTO(this CreateReservaRequestDto reservaDto)
-    {
-        return new Reserva
-        {
-            Fecha = reservaDto.Fecha,
-            UsuarioId = reservaDto.UsuarioId,
-            Precio = 0, // El precio se decide por el servicio, no se asigna aquí
-            ServicioId = reservaDto.ServicioId,
-            Terminada = false // Por defecto, una reserva no está terminada
+            Estado = reserva.Estado,
+            Notas = reserva.Notas,
+            Usuario = reserva.Usuario != null ? new UserSimpleDto
+            {
+                Id = reserva.Usuario.Id,
+                Name = reserva.Usuario.Name
+            } : null,
+            Servicio = reserva.Servicio != null ? new ServicioSimpleDto
+            {
+                Id = reserva.Servicio.Id,
+                Nombre = reserva.Servicio.Nombre
+            } : null
         };
     }
     
-    // why id? // porque al actualizar una reserva, necesitamos el id para buscarla en la base de datos
-    public static Reserva ToReservaFromUpdateDTO(this UpdateReservaRequestDto reservaDto, int id)
+    
+    
+    public static ReservaSimpleDto ToReservaSimpleDto(this Reserva reserva)
+    {
+        return new ReservaSimpleDto
+        {
+            Id = reserva.Id,
+            Fecha = reserva.Fecha,
+            HoraInicio = reserva.HoraInicio,
+            Precio = reserva.Precio,
+            Estado = reserva.Estado,
+            UsuarioNombre = reserva.Usuario?.Name ?? "Usuario no encontrado", //TODO: no funciona, revisar
+            ServicioNombre = reserva.Servicio?.Nombre ?? "Servicio no encontrado"
+        };
+    }
+
+    public static Reserva ToReservaFromCreateDto(this CreateReservaRequestDto reservaDto, int servicioId)
     {
         return new Reserva
         {
-            Id = id,
             Fecha = reservaDto.Fecha,
+            HoraInicio = reservaDto.HoraInicio,
+            HoraFin = reservaDto.HoraFin,
             UsuarioId = reservaDto.UsuarioId,
             Precio = 0, // El precio se decide por el servicio, no se asigna aquí
-            ServicioId = reservaDto.ServicioId,
-            Terminada = reservaDto.Terminada
+            ServicioId = servicioId,
+            Notas = reservaDto.Notas
+        };
+    }
+    
+    public static Reserva ToReservaFromUpdateDto(this UpdateReservaRequestDto reservaDto)
+    {
+        return new Reserva
+        {
+            Fecha = reservaDto.Fecha,
+            HoraInicio = reservaDto.HoraInicio,
+            HoraFin = reservaDto.HoraFin,
+            UsuarioId = reservaDto.UsuarioId,
+            Precio = reservaDto.Precio,
+            Estado = reservaDto.Estado,
+            Notas = reservaDto.Notas
         };
     }
 }

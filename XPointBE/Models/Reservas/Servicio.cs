@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace XPointBE.Dtos.Servicio;
+namespace XPointBE.Models;
 
-public class UpdateServicioRequestDto
+public class Servicio : ModelAuditable
 {
-    [Required]
-    public int Id { get; set; }
     
     [Required]
     [StringLength(100)]
@@ -15,13 +14,16 @@ public class UpdateServicioRequestDto
     public string Descripcion { get; set; } = string.Empty;
     
     [Required]
-    [Range(0.01, double.MaxValue)]
+    [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Precio { get; set; }
     
     public int? DuracionMinutos { get; set; }
     
+    public bool Activo { get; set; } = true;
+    
     [StringLength(50)]
     public string? Categoria { get; set; }
     
-    public bool Activo { get; set; }
+    public ICollection<Reserva> Reservaciones { get; set; }
 }

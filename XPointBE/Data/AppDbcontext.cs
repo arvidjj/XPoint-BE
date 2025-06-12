@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XPointBE.Models;
 
-public class ApplicationDBContext : DbContext
+namespace XPointBE.Data;
+
+public class ApplicationDbContext : DbContext
 {
-    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }

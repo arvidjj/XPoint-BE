@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.Resource;
 using XPointBE.Dtos.Reserva;
 using XPointBE.Dtos.Servicio;
-using XPointBE.Interfaces;
 using XPointBE.Mappers;
+using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Controllers;
 
@@ -63,7 +63,7 @@ public class ServicioController : ControllerBase
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateServicioRequestDto servicioDto)
     {
         var servicio = servicioDto.ToServicioFromUpdateDTO(id);
-        var servicioModel = await _servicioRepository.UpdateAsync(servicio);
+        var servicioModel = await _servicioRepository.UpdateAsync(id, servicio);
         
         if (servicioModel == null)
         {

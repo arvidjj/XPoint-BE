@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using XPointBE.Data;
 using XPointBE.Dtos.User;
 using XPointBE.Mappers;
 using XPointBE.Models;
+using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Controllers;
 
@@ -15,29 +17,32 @@ public class UserController : ControllerBase
 {
 
     private readonly ILogger<UserController> _logger;
-    private readonly ApplicationDBContext _context;
+    private readonly ApplicationDbContext _context;
+    private readonly IUserRepository _userRepository;
 
-    public UserController(ILogger<UserController> logger, ApplicationDBContext context)
+    public UserController(ILogger<UserController> logger, ApplicationDbContext context, IUserRepository userRepository)
     {
         _logger = logger;
         _context = context;
+        _userRepository = userRepository;
     }
 
     [HttpGet(Name = "GetUsers")]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
         _logger.LogInformation("Fetching all users");
-        var users = _context.Users.ToList()
-            .Select(s => s.ToUserDto()); //select es lo mismo que map en js
 
-        return Ok(users);
+        var users = await _userRepository.GetAllAsync();
+        var usersDto = users.Select(s => s.ToUserDto());
+
+        return Ok(usersDto);
     }
     
     [HttpGet("{id:int}", Name = "GetUserById")]
-    public IActionResult Get([FromRoute] int id)
+    public async Task<IActionResult> Get([FromRoute] int id)
     {
         _logger.LogInformation($"Fetching user with ID: {id}");
-        var user = _context.Users.Find(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user != null) return Ok(user.ToUserDto());
         
@@ -47,24 +52,12 @@ public class UserController : ControllerBase
     }
     
     [HttpPost(Name = "CreateUser")]
-    public IActionResult Post([FromBody] CreateUserRequestDto createUserRequestDto)
+    public async Task<IActionResult> Post([FromBody] CreateUserRequestDto userDto)
     {
-        if (!ModelState.IsValid)
-        {
-            _logger.LogWarning("Model validation failed");
-            return BadRequest(ModelState);
-        }
+        var user = userDto.ToUser();
+        _logger.LogInformation("Creating a new User");
         
-        var user = createUserRequestDto.ToUser();
-        _logger.LogInformation("Creating a new user");
-        if (user == null)
-        {
-            _logger.LogWarning("User data is null");
-            return BadRequest("User data cannot be null");
-        }
-        
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        await _userRepository.CreateAsync(user);
         _logger.LogInformation("User created successfully with ID: {Id}", user.Id);
         return CreatedAtAction(nameof(Get), new { id = user.Id }, user.ToUserDto());
     }

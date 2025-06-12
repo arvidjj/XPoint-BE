@@ -1,4 +1,5 @@
 ﻿
+using XPointBE.Dtos.Reserva;
 using XPointBE.Dtos.Servicio;
 using XPointBE.Models;
 
@@ -13,10 +14,11 @@ public static class ServicioMappers
             Id = servicio.Id,
             Nombre = servicio.Nombre,
             Precio = servicio.Precio,
-            Descripcion = servicio.Descripcion
-            
+            Descripcion = servicio.Descripcion,
+            Reservaciones = servicio.Reservaciones?.Select(r => r.ToReservaSimpleDto()).ToList() ?? new List<ReservaSimpleDto>()
         };
     }
+    
 
     public static Servicio ToServicioFromCreateDTO(this CreateServicioRequestDto servicioDto)
     {

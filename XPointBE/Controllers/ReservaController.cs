@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.Resource;
+using XPointBE.Data;
 using XPointBE.Dtos.Reserva;
-using XPointBE.Interfaces;
 using XPointBE.Mappers;
+using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Controllers;
 
@@ -16,15 +17,16 @@ namespace XPointBE.Controllers;
 public class ReservaController : ControllerBase
 {
     private readonly ILogger<ReservaController> _logger;
-    private readonly ApplicationDBContext _context;
     private readonly IReservaRepository _reservaRepository;
+    
+    private readonly IServicioRepository _servicioRepository;
 
 
-    public ReservaController(ILogger<ReservaController> logger, ApplicationDBContext context, IReservaRepository reservaRepository)
+    public ReservaController(ILogger<ReservaController> logger, IReservaRepository reservaRepository, IServicioRepository servicioRepository)
     {
         _logger = logger;
-        _context = context;
         _reservaRepository = reservaRepository;
+        _servicioRepository = servicioRepository;
     }
     
     [HttpGet(Name = "GetReservas")]
@@ -51,15 +53,17 @@ public class ReservaController : ControllerBase
     }
 
     [HttpPost(Name = "CreateReserva")]
-    public async Task<IActionResult> Create([FromBody] CreateReservaRequestDto reservaDto)
+    public async Task<IActionResult> Create([FromRoute] int servicioId ,[FromBody] CreateReservaRequestDto reservaDto)
     {
-        var reserva = reservaDto.ToReservaFromCreateDTO();
-        _logger.LogInformation("Creating a new reserva");
-        if (reserva == null)
+        if(!await _servicioRepository.ExistsAsync(servicioId))
         {
-            _logger.LogWarning("Reserva data is null");
-            return BadRequest("Reserva data cannot be null");
+            _logger.LogWarning("Servicio with ID: {Id} not found", servicioId);
+            return NotFound($"Servicio con ID: {servicioId} no encontrado-");
         }
+        
+        var reserva = reservaDto.ToReservaFromCreateDto(servicioId);
+        _logger.LogInformation("Creating a new reserva");
+        
         await _reservaRepository.CreateAsync(reserva);
         _logger.LogInformation("Reserva created successfully with ID: {Id}", reserva.Id);
         return CreatedAtAction(nameof(Get), new { id = reserva.Id }, reserva.ToReservaDto());
@@ -68,15 +72,15 @@ public class ReservaController : ControllerBase
     [HttpPut("{id:int}", Name = "UpdateReserva")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateReservaRequestDto reservaDto)
     {
-        var reserva = reservaDto.ToReservaFromUpdateDTO(id);
-        var reservaModel = await _reservaRepository.UpdateAsync(reserva);
+        var reserva = reservaDto.ToReservaFromUpdateDto();
+        var reservaModel = await _reservaRepository.UpdateAsync(id, reserva);
         
         if (reservaModel == null)
         {
-            _logger.LogWarning("Reserva with ID: {Id} not found for update", id);
-            return NotFound();
+            _logger.LogWarning("Reserva with ID: {Id} not found", id);
+            return NotFound($"Reserva con ID: {id} no encontrado.");
         }
-        
+
         _logger.LogInformation("Reserva with ID: {Id} updated successfully", id);
         return Ok(reservaModel.ToReservaDto());
     }
