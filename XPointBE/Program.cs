@@ -9,6 +9,8 @@ using XPointBE.Data;
 using XPointBE.Models.Usuarios;
 using XPointBE.Repositories;
 using XPointBE.Repositories.Interfaces;
+using XPointBE.Services;
+using XPointBE.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +71,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options => {
 builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

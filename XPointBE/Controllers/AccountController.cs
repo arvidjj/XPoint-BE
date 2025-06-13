@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using XPointBE.Dtos.User.Auth;
 using XPointBE.Models.Usuarios;
+using XPointBE.Services.Interfaces;
 
 namespace XPointBE.Controllers;
 
@@ -11,9 +12,12 @@ public class AccountController : ControllerBase
 {
     
     private readonly UserManager<User> _userManager;
-    public AccountController(UserManager<User> userManager)
+    private readonly ITokenService _tokenService;
+    
+    public AccountController(UserManager<User> userManager, ITokenService tokenService)
     {
         _userManager = userManager;
+        _tokenService = tokenService;
     }
     
     [HttpPost("registrar")]
@@ -39,7 +43,12 @@ public class AccountController : ControllerBase
                 var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                 if (roleResult.Succeeded)
                 {
-                    return Ok(new { message = "Usuario registrado exitosamente." });
+                    return Ok(new NewUserDto
+                    {
+                        Username = appUser.UserName,
+                        Email = appUser.Email,
+                        Token = _tokenService.CreateToken(appUser)
+                    });
                 }
                 else
                 {
