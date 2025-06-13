@@ -9,6 +9,7 @@ public class UpdateServicioRequestDto
     
     [Required]
     [StringLength(100)]
+    [MinLength(3, ErrorMessage = "El nombre del servicio debe tener al menos 3 caracteres.")]
     public string Nombre { get; set; } = string.Empty;
     
     [StringLength(500)]

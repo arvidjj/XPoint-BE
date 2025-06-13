@@ -54,11 +54,27 @@ public class UserController : ControllerBase
     [HttpPost(Name = "CreateUser")]
     public async Task<IActionResult> Post([FromBody] CreateUserRequestDto userDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Invalid model state for CreateUser");
+            return BadRequest(ModelState);
+        }
+        
         var user = userDto.ToUser();
         _logger.LogInformation("Creating a new User");
         
         await _userRepository.CreateAsync(user);
         _logger.LogInformation("User created successfully with ID: {Id}", user.Id);
         return CreatedAtAction(nameof(Get), new { id = user.Id }, user.ToUserDto());
+    }
+    
+    [HttpDelete("{id:int}", Name = "DeleteUser")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        _logger.LogInformation($"Deleting user with ID: {id}");
+        var user = await _userRepository.DeleteAsync(id);
+
+        _logger.LogInformation("Usuario con ID: {Id} deleted successfully", id);
+        return NoContent();
     }
 }

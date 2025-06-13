@@ -10,13 +10,13 @@ public class CreateReservaRequestDto
     public TimeSpan? HoraInicio { get; set; }
     public TimeSpan? HoraFin { get; set; }
     
-    public int? UsuarioId { get; set; }
+    public string? UsuarioId { get; set; }
     
     //[Required]
     //public int ServicioId { get; set; }
     
     [Required]
-    [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
+    [Range(1000, double.MaxValue, ErrorMessage = "El precio debe ser mayor.")]
     public decimal Precio { get; set; }
     
     [StringLength(500)]

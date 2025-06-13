@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.Resource;
 using XPointBE.Data;
 using XPointBE.Dtos.Reserva;
+using XPointBE.Helpers;
 using XPointBE.Mappers;
 using XPointBE.Repositories.Interfaces;
 
@@ -30,10 +31,11 @@ public class ReservaController : ControllerBase
     }
     
     [HttpGet(Name = "GetReservas")]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] ReservasQueryObject reservasQuery)
     {
+        
         _logger.LogInformation("Fetching all reservas");
-        var reservas = await _reservaRepository.GetAllAsync();
+        var reservas = await _reservaRepository.GetAllQueryAsync(reservasQuery);
             
         var reservasDto = reservas.Select(s => s.ToReservaDto()); //select es lo mismo que map en js
 
@@ -55,6 +57,13 @@ public class ReservaController : ControllerBase
     [HttpPost(Name = "CreateReserva")]
     public async Task<IActionResult> Create([FromRoute] int servicioId ,[FromBody] CreateReservaRequestDto reservaDto)
     {
+        
+        if (!ModelState.IsValid) 
+        {
+            _logger.LogWarning("Invalid model state for reserva creation");
+            return BadRequest(ModelState);
+        }
+        
         if(!await _servicioRepository.ExistsAsync(servicioId))
         {
             _logger.LogWarning("Servicio with ID: {Id} not found", servicioId);
@@ -72,6 +81,13 @@ public class ReservaController : ControllerBase
     [HttpPut("{id:int}", Name = "UpdateReserva")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateReservaRequestDto reservaDto)
     {
+        
+        if (!ModelState.IsValid) 
+        {
+            _logger.LogWarning("Invalid model state for reserva update");
+            return BadRequest(ModelState);
+        }
+        
         var reserva = reservaDto.ToReservaFromUpdateDto();
         var reservaModel = await _reservaRepository.UpdateAsync(id, reserva);
         

@@ -9,7 +9,7 @@ public class ReservaDto : BaseDto
     public DateTime Fecha { get; set; }
     public TimeSpan? HoraInicio { get; set; }
     public TimeSpan? HoraFin { get; set; }
-    public int? UsuarioId { get; set; }
+    public string? UsuarioId { get; set; }
     public int ServicioId { get; set; }
     public decimal Precio { get; set; }
     public ReservaEstadoEnum Estado { get; set; }

@@ -51,6 +51,12 @@ public class ServicioController : ControllerBase
     [HttpPost(Name = "CreateServicio")]
     public async Task<IActionResult> Create([FromBody] CreateServicioRequestDto servicioDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Invalid model state for CreateServicio");
+            return BadRequest(ModelState);
+        }
+        
         var servicio = servicioDto.ToServicioFromCreateDTO();
         _logger.LogInformation("Creating a new Servicio");
         
@@ -62,6 +68,12 @@ public class ServicioController : ControllerBase
     [HttpPut("{id:int}", Name = "UpdateServicio")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateServicioRequestDto servicioDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Invalid model state for UpdateServicio");
+            return BadRequest(ModelState);
+        }
+        
         var servicio = servicioDto.ToServicioFromUpdateDTO(id);
         var servicioModel = await _servicioRepository.UpdateAsync(id, servicio);
         

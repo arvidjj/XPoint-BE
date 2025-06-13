@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XPointBE.Data;
 using XPointBE.Models;
+using XPointBE.Models.Usuarios;
 using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Repositories;
@@ -42,11 +43,10 @@ public class UserRepository : IUserRepository
         var existingUser = await _context.Users.FindAsync(id);
         if (existingUser == null) return null;
 
-        existingUser.Name = user.Name;
+        existingUser.Nombre = user.Nombre;
         existingUser.Email = user.Email;
         existingUser.Telefono = user.Telefono;
         existingUser.PasswordHash = user.PasswordHash; // Ensure password is hashed before saving
-        existingUser.Role = user.Role;
         
         await _context.SaveChangesAsync();
         return existingUser;
@@ -62,8 +62,9 @@ public class UserRepository : IUserRepository
         return true;
     }
     
-    public async Task<bool> ExistsAsync(int id)
+    public async Task<bool> ExistsAsync(string id)
     {
-        return await _context.Users.AnyAsync(u => u.Id == id);
+        return await _context.Users
+            .AnyAsync(u => u.Id.ToString() == id);
     }
 }

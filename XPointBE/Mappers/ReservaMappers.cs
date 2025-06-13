@@ -24,7 +24,7 @@ public static class ReservaMappers
             Usuario = reserva.Usuario != null ? new UserSimpleDto
             {
                 Id = reserva.Usuario.Id,
-                Name = reserva.Usuario.Name
+                Name = reserva.Usuario.Nombre
             } : null,
             Servicio = reserva.Servicio != null ? new ServicioSimpleDto
             {
@@ -45,7 +45,7 @@ public static class ReservaMappers
             HoraInicio = reserva.HoraInicio,
             Precio = reserva.Precio,
             Estado = reserva.Estado,
-            UsuarioNombre = reserva.Usuario?.Name ?? "Usuario no encontrado", //TODO: no funciona, revisar
+            UsuarioNombre = reserva.Usuario?.Nombre ?? "Usuario no encontrado", //TODO: no funciona, revisar
             ServicioNombre = reserva.Servicio?.Nombre ?? "Servicio no encontrado"
         };
     }

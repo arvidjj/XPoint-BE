@@ -12,10 +12,10 @@ public class UpdateReservaRequestDto
     public TimeSpan? HoraInicio { get; set; }
     public TimeSpan? HoraFin { get; set; }
     
-    public int? UsuarioId { get; set; }
+    public string? UsuarioId { get; set; }
     
     [Required]
-    [Range(0.01, double.MaxValue)]
+    [Range(1000, double.MaxValue)]
     public decimal Precio { get; set; }
     
     public ReservaEstadoEnum Estado { get; set; }

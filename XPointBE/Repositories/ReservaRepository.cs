@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XPointBE.Data;
+using XPointBE.Helpers;
 using XPointBE.Models;
 using XPointBE.Repositories.Interfaces;
 
@@ -72,5 +73,51 @@ public class ReservaRepository : IReservaRepository
     public async Task<bool> ExistsAsync(int id)
     {
         return await _context.Reservas.AnyAsync(r => r.Id == id);
+    }
+
+    /**/
+    
+    public async Task<List<Reserva>> GetAllQueryAsync(ReservasQueryObject reservasQuery)
+    {
+        var reservas =  _context.Reservas
+            .Include(r => r.Usuario)
+            .Include(r => r.Servicio)
+            .AsQueryable();
+        
+        //if fecha is not null (hasvalue doesnt work)
+        if (!string.IsNullOrWhiteSpace(reservasQuery.Fecha))
+        {
+            reservas = reservas.Where(r => r.Fecha.ToString("yyyy-MM-dd") == reservasQuery.Fecha);
+        }
+
+        if (!string.IsNullOrWhiteSpace(reservasQuery.UsuarioId))
+        {
+            reservas = reservas.Where(r => r.UsuarioId == reservasQuery.UsuarioId);
+        }
+        if (!string.IsNullOrWhiteSpace(reservasQuery.Estado)){
+            if (Enum.TryParse<ReservaEstadoEnum>(reservasQuery.Estado, true, out var estado))
+            {
+                reservas = reservas.Where(r => r.Estado == estado);
+            }
+            else
+            {
+                throw new ArgumentException("Estado must be a valid ReservaEstadoEnum value.");
+            }
+        }
+        
+        ///order
+        if (!string.IsNullOrWhiteSpace(reservasQuery.SortBy))
+        {
+            if (reservasQuery.SortBy.Equals("fecha", StringComparison.OrdinalIgnoreCase))
+            {
+                reservas = reservasQuery.isDescending ? reservas.OrderByDescending(s => s.Fecha) : reservas.OrderBy(s => s.Fecha);
+            }
+        }
+        
+        //pagination
+        var skipNumber = (reservasQuery.Page - 1) * reservasQuery.PageSize;
+        
+        return await reservas.Skip(skipNumber).Take(reservasQuery.PageSize).ToListAsync();
+        
     }
 }
