@@ -31,8 +31,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
     options.Password.RequiredLength = 8;
-    options.SignIn.RequireConfirmedEmail = true;
-    options.SignIn.RequireConfirmedPhoneNumber = true;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -60,7 +60,34 @@ builder.Services.AddAuthentication(options =>
 
 //SWAGGER
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 //NO PERMITIR REFERENCIAS CIRCULARES EN JSON
 builder.Services.AddControllers().AddNewtonsoftJson(options => {
@@ -88,11 +115,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseAuthorization();
-
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
     app.MapControllers().AllowAnonymous();
-else
+else*/
     app.MapControllers();
 
 app.Run();

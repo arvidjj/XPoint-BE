@@ -31,6 +31,7 @@ public class ReservaController : ControllerBase
     }
     
     [HttpGet(Name = "GetReservas")]
+    [Authorize]
     public async Task<IActionResult> Get([FromQuery] ReservasQueryObject reservasQuery)
     {
         
