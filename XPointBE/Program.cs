@@ -12,6 +12,8 @@ using XPointBE.Repositories.Interfaces;
 using XPointBE.Services;
 using XPointBE.Services.Interfaces;
 
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,6 +23,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
+});
 
 //IDENTITY AUTHENTIICATION Y JWT
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -99,6 +112,8 @@ builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICiudadService, CiudadService>();
+builder.Services.AddHttpClient<ICiudadService, CiudadService>();
 
 var app = builder.Build();
 
@@ -112,8 +127,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+if (app.Environment.IsDevelopment())
+    app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles(); 
+app.UseRouting(); 
+
 
 /*if (app.Environment.IsDevelopment())
     app.MapControllers().AllowAnonymous();

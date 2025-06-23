@@ -11,10 +11,10 @@ using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("[controller]")]
-[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+//[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ReservaController : ControllerBase
 {
     private readonly ILogger<ReservaController> _logger;
@@ -31,7 +31,7 @@ public class ReservaController : ControllerBase
     }
     
     [HttpGet(Name = "GetReservas")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> Get([FromQuery] ReservasQueryObject reservasQuery)
     {
         
@@ -55,7 +55,7 @@ public class ReservaController : ControllerBase
         return NotFound();
     }
 
-    [HttpPost(Name = "CreateReserva")]
+    [HttpPost("{servicioId:int}",Name = "CreateReserva")]
     public async Task<IActionResult> Create([FromRoute] int servicioId ,[FromBody] CreateReservaRequestDto reservaDto)
     {
         

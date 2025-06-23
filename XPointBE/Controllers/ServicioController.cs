@@ -10,10 +10,10 @@ using XPointBE.Repositories.Interfaces;
 
 namespace XPointBE.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("[controller]")]
-[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+//[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ServicioController : ControllerBase
 {
     private readonly ILogger<ServicioController> _logger;
