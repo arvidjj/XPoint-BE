@@ -39,7 +39,7 @@ public class UserController : ControllerBase
     }
     
     [HttpGet("{id:int}", Name = "GetUserById")]
-    public async Task<IActionResult> Get([FromRoute] int id)
+    public async Task<IActionResult> Get([FromRoute] string id)
     {
         _logger.LogInformation($"Fetching user with ID: {id}");
         var user = await _userRepository.GetByIdAsync(id);

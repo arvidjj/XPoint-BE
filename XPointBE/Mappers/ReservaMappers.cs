@@ -24,7 +24,7 @@ public static class ReservaMappers
             Usuario = reserva.Usuario != null ? new UserSimpleDto
             {
                 Id = reserva.Usuario.Id,
-                Name = reserva.Usuario.Nombre
+                Nombre = reserva.Usuario.Nombre
             } : null,
             Servicio = reserva.Servicio != null ? new ServicioSimpleDto
             {

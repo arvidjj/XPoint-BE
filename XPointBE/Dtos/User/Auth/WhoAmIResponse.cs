@@ -1,15 +1,11 @@
 ﻿using XPointBE.Models;
 
-namespace XPointBE.Dtos.User;
+namespace XPointBE.Dtos.User.Auth;
 
-public class UserDto : BaseDto
+public class WhoAmIResponse
 {
-    
     public new string Id { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public UserRoleEnum Role { get; set; }
-    public string? Telefono { get; set; }
-    public DateTime? UltimaConexion { get; set; }
-    public bool Activo { get; set; }
 }

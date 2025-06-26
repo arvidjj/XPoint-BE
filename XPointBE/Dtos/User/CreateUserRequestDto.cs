@@ -7,7 +7,7 @@ public class CreateUserRequestDto
 {
     [Required]
     [StringLength(100)]
-    public string Name { get; set; } = string.Empty;
+    public string Nombre { get; set; } = string.Empty;
     
     [Required]
     [EmailAddress]

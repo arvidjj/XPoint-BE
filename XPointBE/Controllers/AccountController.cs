@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using XPointBE.Dtos.User;
 using XPointBE.Dtos.User.Auth;
 using XPointBE.Models.Usuarios;
 using XPointBE.Services.Interfaces;
@@ -42,19 +43,54 @@ public class AccountController : ControllerBase
             }
             
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            
+            //get role
+            var roles = await _userManager.GetRolesAsync(user);
+            
             if (result.Succeeded)
             {
                 return Ok(new NewUserDto
                 {
-                    Username = user.UserName,
+                    Nombre = user.Nombre,
                     Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
+                    Token = await _tokenService.CreateToken(user),
+                    Role = roles.FirstOrDefault() ?? "User" // Default to "User" if no roles are assigned
                 });
             }
             else
             {
                 return Unauthorized("Invalid email or password.");
             }
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [HttpPost("whoami")]
+    public async Task<IActionResult> WhoAmI([FromBody] WhoAmIRequest whoAmIDto)
+    {
+        try
+        {
+            String token = whoAmIDto.Token;
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest("Token is required.");
+            }
+            var user = await _tokenService.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized("Invalid token.");
+            }
+            
+            return Ok(new WhoAmIResponse 
+            {
+                Id = user.Id,
+                Nombre = user.Nombre,
+                Email = user.Email,
+                Role = user.Role
+            });
         }
         catch (Exception e)
         {
@@ -87,9 +123,9 @@ public class AccountController : ControllerBase
                 {
                     return Ok(new NewUserDto
                     {
-                        Username = appUser.UserName,
+                        Nombre = appUser.Nombre,
                         Email = appUser.Email,
-                        Token = _tokenService.CreateToken(appUser)
+                        Token = await _tokenService.CreateToken(appUser)
                     });
                 }
                 else
@@ -108,6 +144,5 @@ public class AccountController : ControllerBase
         }
         
     }
-    
     
 }

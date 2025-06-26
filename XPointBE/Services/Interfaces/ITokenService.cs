@@ -1,8 +1,10 @@
-﻿using XPointBE.Models.Usuarios;
+﻿using XPointBE.Dtos.User;
+using XPointBE.Models.Usuarios;
 
 namespace XPointBE.Services.Interfaces;
 
 public interface ITokenService
 {
-    string CreateToken(User user);
+    Task<string> CreateToken(User user);
+    Task<UserDto> GetUserFromToken(string token);
 }
