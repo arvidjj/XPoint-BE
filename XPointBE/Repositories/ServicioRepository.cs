@@ -66,4 +66,9 @@ public class ServicioRepository : IServicioRepository
     {
         return await _context.Servicios.AnyAsync(s => s.Id == id);
     }
+
+    public async Task<bool> AtLeastOneExistsAsync()
+    {
+        return await _context.Servicios.AnyAsync();
+    }
 }

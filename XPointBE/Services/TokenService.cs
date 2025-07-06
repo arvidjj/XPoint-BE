@@ -79,7 +79,7 @@ public class TokenService : ITokenService
                 return null;
             }
             
-            var role = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "User";
+            var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
             
             return new UserDto
             {
@@ -87,7 +87,7 @@ public class TokenService : ITokenService
                 Nombre = user.Nombre,
                 Email = user.Email,
                 Telefono = user.Telefono,
-                Role = Enum.Parse<UserRoleEnum>(role)
+                Role = role
             };
         }
         catch (Exception)

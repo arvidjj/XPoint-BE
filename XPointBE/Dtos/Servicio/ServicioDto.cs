@@ -9,6 +9,5 @@ public class ServicioDto : BaseDto
     public decimal Precio { get; set; }
     public int? DuracionMinutos { get; set; }
     public bool Activo { get; set; }
-    public string? Categoria { get; set; }
     public List<ReservaSimpleDto> Reservaciones { get; set; }
 }

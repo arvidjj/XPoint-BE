@@ -89,7 +89,7 @@ public class AccountController : ControllerBase
                 Id = user.Id,
                 Nombre = user.Nombre,
                 Email = user.Email,
-                Role = user.Role
+                Role = user.Role.ToString()
             });
         }
         catch (Exception e)

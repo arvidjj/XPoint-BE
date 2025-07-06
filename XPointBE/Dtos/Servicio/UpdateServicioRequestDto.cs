@@ -21,8 +21,6 @@ public class UpdateServicioRequestDto
     
     public int? DuracionMinutos { get; set; }
     
-    [StringLength(50)]
-    public string? Categoria { get; set; }
     
     public bool Activo { get; set; }
 }

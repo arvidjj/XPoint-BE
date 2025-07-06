@@ -8,5 +8,4 @@ public class ServicioSimpleDto
     public string Nombre { get; set; } = string.Empty;
     public decimal Precio { get; set; }
     public int? DuracionMinutos { get; set; }
-    public string? Categoria { get; set; }
 }

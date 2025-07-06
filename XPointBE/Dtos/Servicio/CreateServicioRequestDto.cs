@@ -18,6 +18,4 @@ public class CreateServicioRequestDto
     
     public int? DuracionMinutos { get; set; }
     
-    [StringLength(50)]
-    public string? Categoria { get; set; }
 }

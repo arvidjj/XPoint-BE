@@ -6,6 +6,7 @@ using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using XPointBE.Data;
+using XPointBE.Middlewares;
 using XPointBE.Models.Usuarios;
 using XPointBE.Repositories;
 using XPointBE.Repositories.Interfaces;
@@ -102,6 +103,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+
 //NO PERMITIR REFERENCIAS CIRCULARES EN JSON
 builder.Services.AddControllers().AddNewtonsoftJson(options => {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -141,5 +143,8 @@ app.UseRouting();
     app.MapControllers().AllowAnonymous();
 else*/
     app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 
 app.Run();

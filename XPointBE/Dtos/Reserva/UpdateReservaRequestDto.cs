@@ -14,8 +14,6 @@ public class UpdateReservaRequestDto
     
     public string? UsuarioId { get; set; }
     
-    [Required]
-    [Range(1000, double.MaxValue)]
     public decimal Precio { get; set; }
     
     public ReservaEstadoEnum Estado { get; set; }

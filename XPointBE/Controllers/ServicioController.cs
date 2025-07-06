@@ -95,6 +95,18 @@ public class ServicioController : ControllerBase
         _logger.LogInformation("Servicio with ID: {Id} deleted successfully", id);
         return NoContent();
     }
-    
+
+
+    [HttpGet("exists")]
+    public async Task<IActionResult> OneExists()
+    {
+        var existen = await _servicioRepository.AtLeastOneExistsAsync();
+        
+        if (existen)
+        {
+            return Ok(new { exists = true });
+        }
+        return Ok(new { exists = false });
+    }
     
 }

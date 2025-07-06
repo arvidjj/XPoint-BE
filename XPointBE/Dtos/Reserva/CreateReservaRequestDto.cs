@@ -15,8 +15,6 @@ public class CreateReservaRequestDto
     //[Required]
     //public int ServicioId { get; set; }
     
-    [Required]
-    [Range(1000, double.MaxValue, ErrorMessage = "El precio debe ser mayor.")]
     public decimal Precio { get; set; }
     
     [StringLength(500)]

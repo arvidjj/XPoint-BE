@@ -16,7 +16,5 @@ public class Servicio : ModelAuditable
     
     public bool Activo { get; set; } = true;
     
-    public string? Categoria { get; set; }
-    
     public ICollection<Reserva> Reservaciones { get; set; }
 }

@@ -28,16 +28,16 @@ public class ApplicationDbContext : IdentityDbContext<User>
     
         List<IdentityRole> roles = new List<IdentityRole>
         {
-            new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
-            new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" },
-            new IdentityRole { Id = "3", Name = "Empleado", NormalizedName = "EMPLEADO" }
+            new IdentityRole { Id = "id-role-admin", Name = "Admin", NormalizedName = "ADMIN" },
+            new IdentityRole { Id = "id-role-user", Name = "User", NormalizedName = "USER" },
+            new IdentityRole { Id = "id-role-empleado", Name = "Empleado", NormalizedName = "EMPLEADO" }
         };
         
         modelBuilder.Entity<IdentityRole>().HasData(roles);
 
         // Seed admin user
         const string ADMIN_USER_ID = "admin-user-id";
-        const string ADMIN_ROLE_ID = "1"; // Admin role ID
+        const string ADMIN_ROLE_ID = "id-role-admin";
 
         var adminUser = new User
         {
